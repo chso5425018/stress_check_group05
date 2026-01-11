@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AIストレス診断 - Direct Access Edition</title>
+    <title>AIストレス診断 - Pro Edition (70項目)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -51,10 +51,10 @@
         <div class="max-w-2xl w-full bg-white rounded-3xl shadow-xl overflow-hidden fade-in">
             <div class="bg-slate-900 p-10 text-white text-center">
                 <div class="inline-block p-4 bg-white/10 rounded-2xl mb-4 text-emerald-400">
-                    <i data-lucide="zap" class="w-12 h-12"></i>
+                    <i data-lucide="activity" class="w-12 h-12"></i>
                 </div>
-                <h1 class="text-3xl font-extrabold mb-2 tracking-tight">AIストレス診断サイト</h1>
-                <p class="opacity-70 text-sm">あなたのスコアをAIが精密分析し、行動を設計します。</p>
+                <h1 class="text-3xl font-extrabold mb-2 tracking-tight">AIストレス診断 (完全版)</h1>
+                <p class="opacity-70 text-sm">70項目の詳細分析により、あなたのメンタルヘルスを可視化します。</p>
             </div>
             <div class="p-10 space-y-6">
                 <div class="flex items-start gap-4 p-4 bg-emerald-50 rounded-2xl border border-emerald-100">
@@ -62,7 +62,7 @@
                     <div>
                         <p class="text-sm font-bold text-emerald-900">システム準備完了</p>
                         <p class="text-xs text-slate-500 leading-relaxed mt-1">
-                            AI分析サーバーと接続されています。すぐに診断を開始できます。
+                            厚生労働省推奨の57項目に加え、独自分析の13項目を追加実装済み。
                         </p>
                     </div>
                 </div>
@@ -91,10 +91,10 @@
             <div class="bg-white rounded-3xl shadow-sm p-10 mb-6 border border-slate-200 fade-in">
                 <h2 id="question-text" class="text-xl font-bold leading-relaxed mb-10 text-slate-800">質問を読み込んでいます...</h2>
                 <div class="grid gap-3" id="answer-buttons">
-                    <button onclick="submitAnswer(4)" class="w-full p-5 rounded-xl border border-slate-200 hover:bg-slate-900 hover:text-white text-left font-bold transition-all">強くそう思う</button>
-                    <button onclick="submitAnswer(3)" class="w-full p-5 rounded-xl border border-slate-200 hover:bg-slate-900 hover:text-white text-left font-bold transition-all">まあまあそう思う</button>
-                    <button onclick="submitAnswer(2)" class="w-full p-5 rounded-xl border border-slate-200 hover:bg-slate-900 hover:text-white text-left font-bold transition-all">あまり思わない</button>
-                    <button onclick="submitAnswer(1)" class="w-full p-5 rounded-xl border border-slate-200 hover:bg-slate-900 hover:text-white text-left font-bold transition-all">全く思わない</button>
+                    <button onclick="submitAnswer(4)" class="w-full p-5 rounded-xl border border-slate-200 hover:bg-slate-900 hover:text-white text-left font-bold transition-all">そうだ（強くそう思う）</button>
+                    <button onclick="submitAnswer(3)" class="w-full p-5 rounded-xl border border-slate-200 hover:bg-slate-900 hover:text-white text-left font-bold transition-all">まあそうだ</button>
+                    <button onclick="submitAnswer(2)" class="w-full p-5 rounded-xl border border-slate-200 hover:bg-slate-900 hover:text-white text-left font-bold transition-all">ちがう（あまり思わない）</button>
+                    <button onclick="submitAnswer(1)" class="w-full p-5 rounded-xl border border-slate-200 hover:bg-slate-900 hover:text-white text-left font-bold transition-all">全くちがう</button>
                 </div>
             </div>
         </div>
@@ -136,18 +136,100 @@
 </div>
 
 <script>
-    const CATEGORIES = { psy: '心理的負荷', phy: '身体的反応', soc: '環境要因' };
-    const QUESTIONS = Array.from({ length: 70 }, (_, i) => ({
-        id: i + 1,
-        text: ["最近、理由もなくイライラすることがありますか？", "十分な睡眠をとっても疲れが取れませんか？", "周囲の人とのコミュニケーションに負担を感じますか？", "自分の将来に対して不安を感じることがありますか？"][i % 4] + ` (Q${i+1})`,
-        category: ['psy', 'phy', 'soc'][i % 3]
-    }));
+    const CATEGORIES = { psy: '心理的負荷', phy: '身体的反応', soc: '環境・支援' };
+    
+    // 職業性ストレス簡易調査票(57項目) + 追加(13項目) = 70項目
+    const QUESTIONS = [
+        // A. 仕事のストレス要因 (1-17) -> 主に心理(psy)と環境(soc)に分類
+        { id: 1, text: "非常にたくさんの仕事をしなければならない", category: 'psy' },
+        { id: 2, text: "時間内に仕事が処理しきれない", category: 'psy' },
+        { id: 3, text: "一生懸命働かなければならない", category: 'psy' },
+        { id: 4, text: "かなり注意を集中する必要がある", category: 'psy' },
+        { id: 5, text: "高度の知識や技術が必要なむずかしい仕事だ", category: 'psy' },
+        { id: 6, text: "勤務時間中はいつも仕事のことを考えていなければならない", category: 'psy' },
+        { id: 7, text: "からだを大変よく使う仕事だ", category: 'phy' },
+        { id: 8, text: "自分のペースで仕事ができる", category: 'soc' },
+        { id: 9, text: "自分で仕事の順番・やり方を決めることができる", category: 'soc' },
+        { id: 10, text: "職場の仕事の方針に自分の意見を反映できる", category: 'soc' },
+        { id: 11, text: "自分の技能や知識を仕事で使うことが少ない", category: 'soc' },
+        { id: 12, text: "部署内で意見のくい違いがある", category: 'soc' },
+        { id: 13, text: "部署と他の部署とはうまが合わない", category: 'soc' },
+        { id: 14, text: "職場の雰囲気は友好的である", category: 'soc' },
+        { id: 15, text: "作業環境(騒音、照明、温度、換気など)はよくない", category: 'soc' },
+        { id: 16, text: "仕事の内容は自分にあっている", category: 'soc' },
+        { id: 17, text: "働きがいのある仕事だ", category: 'soc' },
+        
+        // B. 最近1か月間の状態 (18-46) -> 心理(psy)と身体(phy)
+        { id: 18, text: "活気がわいてくる", category: 'psy' },
+        { id: 19, text: "元気がいっぱいだ", category: 'psy' },
+        { id: 20, text: "生き生きする", category: 'psy' },
+        { id: 21, text: "怒りを感じる", category: 'psy' },
+        { id: 22, text: "内心腹立たしい", category: 'psy' },
+        { id: 23, text: "イライラしている", category: 'psy' },
+        { id: 24, text: "ひどく疲れた", category: 'phy' },
+        { id: 25, text: "へとへとだ", category: 'phy' },
+        { id: 26, text: "だるい", category: 'phy' },
+        { id: 27, text: "気がはりつめている", category: 'psy' },
+        { id: 28, text: "不安だ", category: 'psy' },
+        { id: 29, text: "落着かない", category: 'psy' },
+        { id: 30, text: "ゆううつだ", category: 'psy' },
+        { id: 31, text: "何をするのも面倒だ", category: 'psy' },
+        { id: 32, text: "物事に集中できない", category: 'psy' },
+        { id: 33, text: "気分が晴れない", category: 'psy' },
+        { id: 34, text: "仕事が手につかない", category: 'psy' },
+        { id: 35, text: "悲しいと感じる", category: 'psy' },
+        { id: 36, text: "めまいがする", category: 'phy' },
+        { id: 37, text: "体のふしぶしが痛む", category: 'phy' },
+        { id: 38, text: "頭が重かったり頭痛がする", category: 'phy' },
+        { id: 39, text: "首筋や肩がこる", category: 'phy' },
+        { id: 40, text: "腰が痛い", category: 'phy' },
+        { id: 41, text: "目が疲れる", category: 'phy' },
+        { id: 42, text: "動悸や息切れがする", category: 'phy' },
+        { id: 43, text: "胃腸の具合が悪い", category: 'phy' },
+        { id: 44, text: "食欲がない", category: 'phy' },
+        { id: 45, text: "便秘や下痢をする", category: 'phy' },
+        { id: 46, text: "よく眠れない", category: 'phy' },
+
+        // C. 周囲のサポート (47-55) -> 環境(soc)
+        { id: 47, text: "上司と気軽に話ができますか?", category: 'soc' },
+        { id: 48, text: "職場の同僚と気軽に話ができますか?", category: 'soc' },
+        { id: 49, text: "配偶者、家族、友人等と気軽に話ができますか?", category: 'soc' },
+        { id: 50, text: "困った時、上司は頼りになりますか?", category: 'soc' },
+        { id: 51, text: "困った時、職場の同僚は頼りになりますか?", category: 'soc' },
+        { id: 52, text: "困った時、配偶者、家族、友人等は頼りになりますか?", category: 'soc' },
+        { id: 53, text: "個人的な問題を相談したら、上司はきいてくれますか?", category: 'soc' },
+        { id: 54, text: "個人的な問題を相談したら、職場の同僚はきいてくれますか?", category: 'soc' },
+        { id: 55, text: "個人的な問題を相談したら、配偶者、家族、友人等はきいてくれますか?", category: 'soc' },
+
+        // D. 満足度 (56-57) -> 環境(soc)
+        { id: 56, text: "仕事に満足だ", category: 'soc' },
+        { id: 57, text: "家庭生活に満足だ", category: 'soc' },
+
+        // 追加項目 (58-70)
+        // A 仕事のストレス要因 -> psy/soc
+        { id: 58, text: "業務の内容や目的が不明確なことが多い", category: 'psy' },
+        { id: 59, text: "仕事の成果に対する正当な評価が与えられている", category: 'soc' },
+        { id: 60, text: "仕事をするうえで必要な情報が十分かつ随時に提供されている", category: 'soc' },
+        { id: 61, text: "仕事と私生活のバランスが取れている", category: 'soc' },
+        { id: 62, text: "自分の将来のキャリアについて、職場から十分な支援を受けている", category: 'soc' },
+        
+        // C 周囲のサポート（職場環境） -> soc
+        { id: 63, text: "職場内で不公正な扱いを受けていると感じる", category: 'soc' },
+        { id: 64, text: "職場内でいやがらせやハラスメントなどを経験したことがある", category: 'soc' },
+        { id: 65, text: "自分の意見や提案を尊重してくれている", category: 'soc' },
+        { id: 66, text: "職場の理念やビジョンに共感している", category: 'soc' },
+        
+        // E 働きがい・意欲 -> psy
+        { id: 67, text: "今の自分の仕事に対し、意欲的である", category: 'psy' },
+        { id: 68, text: "仕事を通じて成長できていると感じる", category: 'psy' },
+        { id: 69, text: "仕事が楽しく、つい時間を忘れて没頭してしまうことがある", category: 'psy' },
+        { id: 70, text: "これから先も継続して同じ仕事を続けられる自信がある", category: 'psy' }
+    ];
 
     let currentIdx = 0;
     let answers = {};
 
     window.onload = () => {
-        // キーの入力チェックロジックを削除し、アイコンの初期化のみ行います
         lucide.createIcons();
     };
 
@@ -164,13 +246,17 @@
         document.getElementById('question-text').innerText = q.text;
         document.getElementById('category-badge').innerText = CATEGORIES[q.category];
         document.getElementById('current-count').innerText = currentIdx + 1;
-        document.getElementById('progress-bar').style.width = `${((currentIdx + 1) / 70) * 100}%`;
+        document.getElementById('progress-bar').style.width = `${((currentIdx + 1) / QUESTIONS.length) * 100}%`;
     }
 
     function submitAnswer(val) {
         answers[QUESTIONS[currentIdx].id] = val;
-        if (currentIdx < 69) { currentIdx++; updateQuestion(); }
-        else { renderResult(); }
+        if (currentIdx < QUESTIONS.length - 1) { 
+            currentIdx++; 
+            updateQuestion(); 
+        } else { 
+            renderResult(); 
+        }
     }
 
     async function renderResult() {
@@ -178,13 +264,26 @@
         document.getElementById('result-screen').classList.remove('hidden');
         document.getElementById('result-date').innerText = new Date().toLocaleDateString('ja-JP', { year: 'numeric', month: 'long', day: 'numeric' });
 
+        // カテゴリごとのスコア計算
         const scores = { psy: 0, phy: 0, soc: 0 };
-        Object.entries(answers).forEach(([id, val]) => { scores[QUESTIONS[id-1].category] += val; });
-        const chartData = [Math.round((scores.psy/96)*100), Math.round((scores.phy/92)*100), Math.round((scores.soc/92)*100)];
+        const maxScores = { psy: 0, phy: 0, soc: 0 }; // 満点を動的に計算
+
+        QUESTIONS.forEach(q => {
+            if (answers[q.id]) {
+                scores[q.category] += answers[q.id];
+                maxScores[q.category] += 4; // 1問最大4点
+            }
+        });
+
+        const chartData = [
+            Math.round((scores.psy / maxScores.psy) * 100) || 0,
+            Math.round((scores.phy / maxScores.phy) * 100) || 0,
+            Math.round((scores.soc / maxScores.soc) * 100) || 0
+        ];
 
         new Chart(document.getElementById('radarChart'), {
             type: 'radar',
-            data: { labels: ['心理', '身体', '環境'], datasets: [{ data: chartData, backgroundColor: 'rgba(79, 70, 229, 0.1)', borderColor: 'rgb(79, 70, 229)', borderWidth: 2 }] },
+            data: { labels: ['心理的負荷', '身体的反応', '環境・支援'], datasets: [{ data: chartData, backgroundColor: 'rgba(79, 70, 229, 0.1)', borderColor: 'rgb(79, 70, 229)', borderWidth: 2 }] },
             options: { scales: { r: { min: 0, max: 100, ticks: { display: false } } }, plugins: { legend: { display: false } } }
         });
 
@@ -192,27 +291,36 @@
     }
 
     async function fetchAIAdvice(scores) {
-        // キーが空欄、または書き換え忘れのチェック
         if (!activeApiKey || activeApiKey.includes("ここに")) {
             alert("APIキーが設定されていません。コード内の activeApiKey を確認してください。");
             showErrorAdvice();
             return;
         }
 
-        const prompt = `分析：心理${scores[0]}%, 身体${scores[1]}%, 環境${scores[2]}%。JSON形式回答：{"status":"良好/注意/警戒","color":"bg-emerald-50 text-emerald-700等","advice":"診断総評","actions":["行動1","行動2"]}`;
+        const prompt = `あなたはメンタルヘルスの専門家です。以下のストレスチェック結果に基づき、JSON形式でアドバイスをください。
         
-        // 空白除去などの安全対策をしてURLを作成
-        const baseUrl = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent";
-        
-        // ▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲
+        【結果】
+        - 心理的ストレス(不安・怒り・業務負荷): ${scores[0]}%
+        - 身体的ストレス(疲労・痛み): ${scores[1]}%
+        - 環境・社会的支援(職場の人間関係・サポート): ${scores[2]}%
+        ※数値が高いほどストレスやリスクが高い、あるいは支援が不足している状態です。
 
+        【回答フォーマット(JSON)】
+        {
+            "status": "短い診断名（例：要注意、メンテナンス推奨、など）",
+            "color": "TailwindCSSのクラス文字列（例：bg-red-50 text-red-700、bg-yellow-50 text-yellow-700、bg-emerald-50 text-emerald-700）",
+            "advice": "150文字程度で、共感的かつ具体的なアドバイス。",
+            "actions": ["今日からできる具体的な行動1", "行動2", "行動3"]
+        }`;
+        
+        const baseUrl = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent";
         const finalUrl = `${baseUrl}?key=${activeApiKey.trim()}`;
 
-        console.log("通信開始: " + finalUrl.replace(activeApiKey.trim(), "HIDDEN_KEY")); // ログにはキーを隠して表示
+        console.log("AI分析リクエスト送信...");
 
         try {
             const res = await fetch(finalUrl, {
-                method: 'POST', // ★ここ重要：必ずPOSTで送る
+                method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ 
                     contents: [{ parts: [{ text: prompt }] }], 
@@ -221,16 +329,12 @@
             });
 
             if (!res.ok) {
-                // ここで400や403が出たら詳細を表示
                 const errorDetail = await res.json();
                 console.error("APIエラー:", errorDetail);
-                alert("エラーが発生しました。F12のConsoleを確認してください。");
-                showErrorAdvice();
-                return;
+                throw new Error("API Request Failed");
             }
 
             const json = await res.json();
-            // JSONパースの安全対策
             const textContent = json.candidates[0].content.parts[0].text;
             displayAI(JSON.parse(textContent));
 
@@ -251,7 +355,7 @@
     }
 
     function showErrorAdvice() {
-        displayAI({ status: "通信エラー", color: "bg-red-50 text-red-700", advice: "AIサーバーとの通信に失敗しました。時間をおいて再試行してください。", actions: ["再読み込み"] });
+        displayAI({ status: "分析エラー", color: "bg-gray-100 text-gray-700", advice: "AIサーバーとの通信に失敗しました。ネットワークを確認するか、しばらく経ってから再試行してください。", actions: ["再読み込み"] });
     }
 </script>
 </body>
