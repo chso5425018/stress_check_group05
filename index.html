@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AIストレス診断 - Smart Setup Edition</title>
+    <title>AIストレス診断 - Direct Access Edition</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -24,7 +24,10 @@
 
 <script>
     const CLASS_PASSWORD = "5425_gakumon_group05"; 
-    let activeApiKey = "";
+
+    // ▼▼▼ ここにあなたのAPIキーを貼り付けてください ▼▼▼
+    const activeApiKey = "AIzaSyAqF4bGZUeDUzUBky61buoY72DDltHbVFY"; 
+    // ▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲
 
     function checkAccess() {
         if (sessionStorage.getItem('isAuthorized') === 'true') {
@@ -44,7 +47,6 @@
 </script>
 
 <div id="app">
-    <!-- 1. Welcome Screen -->
     <div id="welcome-screen" class="min-h-screen flex items-center justify-center p-4">
         <div class="max-w-2xl w-full bg-white rounded-3xl shadow-xl overflow-hidden fade-in">
             <div class="bg-slate-900 p-10 text-white text-center">
@@ -55,100 +57,27 @@
                 <p class="opacity-70 text-sm">あなたのスコアをAIが精密分析し、行動を設計します。</p>
             </div>
             <div class="p-10 space-y-6">
-                <div id="api-status-card" class="flex items-start gap-4 p-4 bg-slate-50 rounded-2xl border border-slate-200">
-                    <i data-lucide="shield-check" id="status-icon-main" class="text-slate-400 w-6 h-6 shrink-0"></i>
+                <div class="flex items-start gap-4 p-4 bg-emerald-50 rounded-2xl border border-emerald-100">
+                    <i data-lucide="check-circle" class="text-emerald-500 w-6 h-6 shrink-0"></i>
                     <div>
-                        <p class="text-sm font-bold text-slate-900" id="status-title-main">APIキー未設定</p>
-                        <p class="text-xs text-slate-500 leading-relaxed mt-1" id="status-desc-main">
-                            AI分析を有効にするにはキーの設定が必要です。
+                        <p class="text-sm font-bold text-emerald-900">システム準備完了</p>
+                        <p class="text-xs text-slate-500 leading-relaxed mt-1">
+                            AI分析サーバーと接続されています。すぐに診断を開始できます。
                         </p>
                     </div>
                 </div>
 
-                <div id="ready-actions" class="space-y-3">
-                    <button onclick="startTest()" id="quick-start-btn" class="hidden w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-4 rounded-xl transition-all shadow-lg flex items-center justify-center gap-2">
-                        診断をすぐに開始する
+                <div class="space-y-3">
+                    <button onclick="startTest()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-4 rounded-xl transition-all shadow-lg flex items-center justify-center gap-2">
+                        診断を開始する
                         <i data-lucide="play"></i>
                     </button>
-                    <button onclick="showGuide()" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-4 rounded-xl transition-all shadow-lg flex items-center justify-center gap-2 group">
-                        APIキーを設定・取得する
-                        <i data-lucide="key" class="w-4 h-4"></i>
-                    </button>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- 2. API Key Guide Screen -->
-    <div id="guide-screen" class="hidden min-h-screen flex items-center justify-center p-4">
-        <div class="max-w-2xl w-full bg-white rounded-3xl shadow-xl overflow-hidden fade-in">
-            <div class="p-8 border-b border-slate-100 flex justify-between items-center">
-                <h2 class="text-xl font-bold flex items-center gap-2">
-                    <i data-lucide="help-circle" class="text-indigo-600"></i>
-                    APIキー取得ガイド
-                </h2>
-                <button onclick="showWelcome()" class="text-slate-400 hover:text-slate-600">
-                    <i data-lucide="x"></i>
-                </button>
-            </div>
-            <div class="p-8 space-y-8">
-                <div class="relative pl-10">
-                    <div class="absolute left-0 top-0 w-8 h-8 bg-indigo-100 text-indigo-600 rounded-full flex items-center justify-center font-bold">1</div>
-                    <p class="font-bold text-slate-800 mb-1">Google AI Studioにアクセス</p>
-                    <a href="https://aistudio.google.com/app/apikey" target="_blank" class="inline-flex items-center gap-2 text-indigo-600 font-bold text-sm hover:underline">
-                        Google AI Studioを開く <i data-lucide="external-link" class="w-4 h-4"></i>
-                    </a>
-                </div>
-
-                <div class="relative pl-10">
-                    <div class="absolute left-0 top-0 w-8 h-8 bg-indigo-100 text-indigo-600 rounded-full flex items-center justify-center font-bold">2</div>
-                    <p class="font-bold text-slate-800 mb-1">キーをコピー</p>
-                    <p class="text-sm text-slate-500">「Create API key」をクリックして取得します。</p>
-                </div>
-
-                <button onclick="showKeyInput()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-4 rounded-xl transition-all shadow-lg flex items-center justify-center gap-2">
-                    コピーしたキーを入力する
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <!-- 3. Key Input Screen -->
-    <div id="key-screen" class="hidden min-h-screen flex items-center justify-center p-4">
-        <div class="max-w-xl w-full bg-white rounded-3xl shadow-xl overflow-hidden fade-in">
-            <div class="p-10">
-                <div class="mb-8">
-                    <h2 class="text-2xl font-bold text-slate-900 mb-2">APIキーの設定</h2>
-                    <p class="text-sm text-slate-500">
-                        入力されたキーはブラウザにのみ保存され、外部に漏洩することはありません。
-                    </p>
-                </div>
-
-                <div class="space-y-6">
-                    <div class="relative">
-                        <i data-lucide="key" class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 w-5 h-5"></i>
-                        <input type="password" id="api-key-input" placeholder="AIzaSy..." 
-                               class="w-full pl-12 pr-4 py-4 rounded-xl border-2 border-slate-100 focus:border-indigo-600 outline-none transition-all font-mono">
-                    </div>
-
-                    <div class="flex items-center gap-3 p-4 bg-amber-50 rounded-2xl border border-amber-100">
-                        <input type="checkbox" id="save-key-local" checked class="w-4 h-4 rounded border-amber-300">
-                        <label for="save-key-local" class="text-xs text-amber-800 leading-tight">
-                            このブラウザに保存して次回から自動入力する（推奨）
-                        </label>
-                    </div>
-
-                    <button onclick="applyKey()" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-4 rounded-xl transition-all shadow-lg flex items-center justify-center gap-2">
-                        設定を保存して戻る
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Test & Result Screens (Same as before) -->
     <div id="test-screen" class="hidden min-h-screen flex flex-col items-center py-12 px-4">
-        <!-- Content same as previous version -->
         <div class="max-w-xl w-full">
             <div class="mb-8">
                 <div class="flex justify-between items-end mb-2">
@@ -172,7 +101,6 @@
     </div>
 
     <div id="result-screen" class="hidden min-h-screen py-12 px-4">
-        <!-- Content same as previous version -->
         <div class="max-w-4xl mx-auto">
             <div class="text-center mb-10">
                 <h2 class="text-3xl font-black text-slate-900 mb-2">診断結果レポート</h2>
@@ -219,67 +147,12 @@
     let answers = {};
 
     window.onload = () => {
-        // 1. URLパラメータからキーを自動取得 (?key=AIza... の形式)
-        const params = new URLSearchParams(window.location.search);
-        const urlKey = params.get('key');
-        
-        // 2. ローカルストレージから復元
-        const savedKey = localStorage.getItem('temp_gemini_key');
-
-        if (urlKey) {
-            activeApiKey = urlKey;
-            document.getElementById('api-key-input').value = urlKey;
-            updateStatusUI(true, "URLから読込済");
-        } else if (savedKey) {
-            activeApiKey = savedKey;
-            document.getElementById('api-key-input').value = savedKey;
-            updateStatusUI(true, "保存済みキーを使用");
-        }
-
+        // キーの入力チェックロジックを削除し、アイコンの初期化のみ行います
         lucide.createIcons();
     };
 
-    function updateStatusUI(isReady, msg) {
-        const card = document.getElementById('api-status-card');
-        const icon = document.getElementById('status-icon-main');
-        const title = document.getElementById('status-title-main');
-        const desc = document.getElementById('status-desc-main');
-        const quickBtn = document.getElementById('quick-start-btn');
-
-        if (isReady) {
-            card.classList.replace('bg-slate-50', 'bg-emerald-50');
-            card.classList.replace('border-slate-200', 'border-emerald-100');
-            icon.className = "text-emerald-500 w-6 h-6 shrink-0";
-            icon.setAttribute('data-lucide', 'check-circle');
-            title.innerText = "AI機能の準備完了";
-            title.classList.add('text-emerald-900');
-            desc.innerText = msg;
-            quickBtn.classList.remove('hidden');
-        }
-        lucide.createIcons();
-    }
-
-    function applyKey() {
-        const keyInput = document.getElementById('api-key-input').value.trim();
-        const shouldSave = document.getElementById('save-key-local').checked;
-
-        if (keyInput) {
-            activeApiKey = keyInput;
-            if (shouldSave) localStorage.setItem('temp_gemini_key', keyInput);
-            else localStorage.removeItem('temp_gemini_key');
-            updateStatusUI(true, "設定済み");
-            showWelcome();
-        } else {
-            alert("キーを入力してください");
-        }
-    }
-
-    // 画面遷移・診断ロジック (既存)
-    function hideAll() { ['welcome-screen', 'guide-screen', 'key-screen', 'test-screen', 'result-screen'].forEach(id => document.getElementById(id).classList.add('hidden')); }
-    function showWelcome() { hideAll(); document.getElementById('welcome-screen').classList.remove('hidden'); lucide.createIcons(); }
-    function showGuide() { hideAll(); document.getElementById('guide-screen').classList.remove('hidden'); lucide.createIcons(); }
-    function showKeyInput() { hideAll(); document.getElementById('key-screen').classList.remove('hidden'); lucide.createIcons(); }
-
+    function hideAll() { ['welcome-screen', 'test-screen', 'result-screen'].forEach(id => document.getElementById(id).classList.add('hidden')); }
+    
     function startTest() {
         hideAll();
         document.getElementById('test-screen').classList.remove('hidden');
@@ -319,17 +192,21 @@
     }
 
     async function fetchAIAdvice(scores) {
-        if (!activeApiKey) { showDemoAdvice(); return; }
+        // キーがハードコーディングされているため、入力チェックを削除
         const prompt = `分析：心理${scores[0]}%, 身体${scores[1]}%, 環境${scores[2]}%。JSON形式回答：{"status":"良好/注意/警戒","color":"bg-emerald-50 text-emerald-700等","advice":"診断総評","actions":["行動1","行動2"]}`;
         try {
-            const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${activeApiKey}`, {
+            // ※ gemini-1.5-flash を使用 (安定版)
+            const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${activeApiKey}`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }], generationConfig: { responseMimeType: "application/json" } })
             });
             const json = await res.json();
             displayAI(JSON.parse(json.candidates[0].content.parts[0].text));
-        } catch (e) { showDemoAdvice("エラーが発生しました。"); }
+        } catch (e) { 
+            console.error(e);
+            showErrorAdvice(); 
+        }
     }
 
     function displayAI(data) {
@@ -342,8 +219,8 @@
         document.getElementById('action-plan').innerHTML = data.actions.map(a => `<div class="p-3 bg-slate-50 rounded-xl text-xs font-bold border border-slate-100 shadow-sm">・ ${a}</div>`).join('');
     }
 
-    function showDemoAdvice(msg) {
-        displayAI({ status: "キー未入力", color: "bg-slate-100 text-slate-500", advice: msg || "AI分析なし", actions: ["キーを設定してください"] });
+    function showErrorAdvice() {
+        displayAI({ status: "通信エラー", color: "bg-red-50 text-red-700", advice: "AIサーバーとの通信に失敗しました。時間をおいて再試行してください。", actions: ["再読み込み"] });
     }
 </script>
 </body>
