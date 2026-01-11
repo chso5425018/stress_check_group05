@@ -26,7 +26,7 @@
     const CLASS_PASSWORD = "5425_gakumon_group05"; 
 
     // ▼▼▼ ここにあなたのAPIキーを貼り付けてください ▼▼▼
-    const activeApiKey = "AIzaSyDdtrxapZkgLvzSvVphkV_lhUMumvpdkeE"; 
+    const activeApiKey = "AIzaSyDE0KOiasP3ZC23PGiiU64NqT_eEJCuMhE"; 
     // ▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲
 
     function checkAccess() {
@@ -202,7 +202,10 @@
         const prompt = `分析：心理${scores[0]}%, 身体${scores[1]}%, 環境${scores[2]}%。JSON形式回答：{"status":"良好/注意/警戒","color":"bg-emerald-50 text-emerald-700等","advice":"診断総評","actions":["行動1","行動2"]}`;
         
         // 空白除去などの安全対策をしてURLを作成
-        const baseUrl = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent";
+        const baseUrl = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent";
+        
+        // ▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲
+
         const finalUrl = `${baseUrl}?key=${activeApiKey.trim()}`;
 
         console.log("通信開始: " + finalUrl.replace(activeApiKey.trim(), "HIDDEN_KEY")); // ログにはキーを隠して表示
