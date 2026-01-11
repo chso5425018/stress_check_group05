@@ -26,7 +26,7 @@
     const CLASS_PASSWORD = "5425_gakumon_group05"; 
 
     // ▼▼▼ ここにあなたのAPIキーを貼り付けてください ▼▼▼
-    const activeApiKey = "AIzaSyAqF4bGZUeDUzUBky61buoY72DDltHbVFY"; 
+    const activeApiKey = "AIzaSyDdtrxapZkgLvzSvVphkV_lhUMumvpdkeE"; 
     // ▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲
 
     function checkAccess() {
@@ -192,19 +192,47 @@
     }
 
     async function fetchAIAdvice(scores) {
-        // キーがハードコーディングされているため、入力チェックを削除
+        // キーが空欄、または書き換え忘れのチェック
+        if (!activeApiKey || activeApiKey.includes("ここに")) {
+            alert("APIキーが設定されていません。コード内の activeApiKey を確認してください。");
+            showErrorAdvice();
+            return;
+        }
+
         const prompt = `分析：心理${scores[0]}%, 身体${scores[1]}%, 環境${scores[2]}%。JSON形式回答：{"status":"良好/注意/警戒","color":"bg-emerald-50 text-emerald-700等","advice":"診断総評","actions":["行動1","行動2"]}`;
+        
+        // 空白除去などの安全対策をしてURLを作成
+        const baseUrl = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent";
+        const finalUrl = `${baseUrl}?key=${activeApiKey.trim()}`;
+
+        console.log("通信開始: " + finalUrl.replace(activeApiKey.trim(), "HIDDEN_KEY")); // ログにはキーを隠して表示
+
         try {
-            // ※ gemini-1.5-flash を使用 (安定版)
-            const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${activeApiKey}`, {
-                method: 'POST',
+            const res = await fetch(finalUrl, {
+                method: 'POST', // ★ここ重要：必ずPOSTで送る
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }], generationConfig: { responseMimeType: "application/json" } })
+                body: JSON.stringify({ 
+                    contents: [{ parts: [{ text: prompt }] }], 
+                    generationConfig: { responseMimeType: "application/json" } 
+                })
             });
+
+            if (!res.ok) {
+                // ここで400や403が出たら詳細を表示
+                const errorDetail = await res.json();
+                console.error("APIエラー:", errorDetail);
+                alert("エラーが発生しました。F12のConsoleを確認してください。");
+                showErrorAdvice();
+                return;
+            }
+
             const json = await res.json();
-            displayAI(JSON.parse(json.candidates[0].content.parts[0].text));
+            // JSONパースの安全対策
+            const textContent = json.candidates[0].content.parts[0].text;
+            displayAI(JSON.parse(textContent));
+
         } catch (e) { 
-            console.error(e);
+            console.error("通信失敗:", e);
             showErrorAdvice(); 
         }
     }
